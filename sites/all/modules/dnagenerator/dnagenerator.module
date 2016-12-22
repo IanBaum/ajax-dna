@@ -1,0 +1,76 @@
+<?php
+function dnagenerator_menu(){
+  $items = array();
+  $items['dnagenerator'] = array(
+    'title' => "DNA Generator",
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'access callback' => TRUE,
+    'page arguments' => array('dna_form'),
+  );
+  $items['dnagenerator_results'] = array(
+    'title' => "DNA Generator",
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'page callback' => 'dnagenerator_results'
+  );
+  return $items;
+}
+
+function dna_form(){
+  $form['dna_one']=array(
+    '#title' => 'Starting Half',
+    '#type' => 'textfield',
+    '#description' => "Enter the first half of the helix",
+    '#requirerd' => TRUE,
+    '#element_validate' => array('element_validate_dna_form'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Submit',
+  );
+
+  return $form;
+}
+
+function dna_form_submit($form, &$form_state){
+  $input = strtoupper($form_state['values']['dna_one']);
+  $_SESSION['input'] = $input;
+
+  $input_as_array = str_split($input);
+  $output = '';
+
+  for($i = 0; $i < count($input_as_array); $i++){
+    if($input_as_array[$i] === 'A'){
+      $output .= 'T';
+    }elseif($input_as_array[$i] === 'T'){
+      $output .= 'A';
+    }elseif($input_as_array[$i] === 'C'){
+      $output .= 'G';
+    }elseif($input_as_array[$i] === 'G'){
+      $output .= 'C';
+    }
+  }
+  $_SESSION['output'] = $output;
+  $form_state['redirect'] = 'dnagenerator_results';
+
+  return $output;
+}
+
+function dnagenerator_results(){
+  $output = $_SESSION['output'];
+  $input = $_SESSION['input'];
+
+  return "<h1>" . $input . "   " . $output . "</h1>";
+}
+
+function element_validate_dna_form($element){
+  $valid_characters = ['A','C','G','T'];
+  $input_split = str_split($element['#value']);
+  for($i = 0; $i < count($input_split); $i++){
+    if(!in_array(strtoupper($input_split{0}), $valid_characters) || count($input_split) <= 0){
+      form_error($element, t('Please enter at least one letter, only including A C G or T.'));
+    }
+  }
+}

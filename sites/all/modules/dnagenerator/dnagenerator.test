@@ -1,0 +1,45 @@
+<?php
+
+class DnaGeneratorWebTests extends DrupalWebTestCase{
+  public static function getInfo(){
+    return array(
+      'name' => 'DNA Generator functional Tests',
+      'description' => 'Tests the Greeting module.',
+      'group' => 'MY TESTS ARE BEST TESTS',
+    );
+  }
+
+  public function setUp(){
+    parent::setUp(array('dnagenerator'));
+  }
+
+  public function testDnaGeneratorNavigation(){
+    $this->drupalGet('dnagenerator');
+
+    $this->assertText('Enter the first half of the helix', 'The Text on the page is correct');
+  }
+}
+
+
+class DnaGeneratorUnitTests extends DrupalUnitTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => "DNA Generator Unit Tests",
+      'description' => t('Tests the logic of DNA Generator.'),
+      'group' => 'MY TESTS ARE BEST TESTS',
+    );
+  }
+
+  public function testDnaGenerator() {
+    $description = 'input catg outputs GTAC';
+
+    $form_state['values']['dna_one'] = "catg";
+    $form = "DNA Generator";
+
+    $output = dna_form_submit($form, $form_state);
+
+    $this->assertEqual($output, 'GTAC', $description);
+  }
+
+}

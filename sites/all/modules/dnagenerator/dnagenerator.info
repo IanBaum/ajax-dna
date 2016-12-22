@@ -1,0 +1,7 @@
+name = DNA Generator
+description = generates the second half of a DNA helix based on user input.
+package = Other
+core = 7.x
+files[] = dnagenerator.module
+files[] = dnagenerator.test
+dependencies[] = simpletest
